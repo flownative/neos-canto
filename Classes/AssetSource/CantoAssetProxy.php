@@ -21,6 +21,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\HasRemoteOriginalInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\ProvidesOriginalUriInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\SupportsIptcMetadataInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\ImportedAsset;
@@ -34,7 +35,7 @@ use stdClass;
 /**
  *
  */
-final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInterface, SupportsIptcMetadataInterface
+final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInterface, ProvidesOriginalUriInterface, SupportsIptcMetadataInterface
 {
     /**
      * @var CantoAssetSource
@@ -281,6 +282,14 @@ final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInt
     public function getImportStream()
     {
         return fopen($this->originalUri, 'rb');
+    }
+
+    /**
+     * @return UriInterface
+     */
+    public function getOriginalUri(): UriInterface
+    {
+        return new Uri($this->originalUri);
     }
 
     /**
