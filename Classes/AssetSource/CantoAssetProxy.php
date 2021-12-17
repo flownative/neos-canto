@@ -82,6 +82,11 @@ final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInt
     private $previewUri;
 
     /**
+     * @var string
+     */
+    private $originalUri;
+
+    /**
      * @var int
      */
     private $widthInPixels;
@@ -135,6 +140,7 @@ final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInt
         $assetProxy->widthInPixels = $jsonObject->width ? (int)$jsonObject->width : null;
         $assetProxy->heightInPixels = $jsonObject->height ? (int)$jsonObject->height : null;
 
+        $assetProxy->originalUri = $jsonObject->url->directUrlOriginal;
         $assetProxy->previewUri = $jsonObject->url->directUrlPreview;
 
         return $assetProxy;
@@ -274,7 +280,7 @@ final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInt
      */
     public function getImportStream()
     {
-        return fopen((string)$this->assetSource->getCantoClient()->directUri($this->identifier), 'rb');
+        return fopen($this->originalUri, 'rb');
     }
 
     /**
