@@ -21,6 +21,7 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\AssetProxyInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\HasRemoteOriginalInterface;
+use Neos\Media\Domain\Model\AssetSource\AssetProxy\ProvidesOriginalUriInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetProxy\SupportsIptcMetadataInterface;
 use Neos\Media\Domain\Model\AssetSource\AssetSourceInterface;
 use Neos\Media\Domain\Model\ImportedAsset;
@@ -34,7 +35,7 @@ use stdClass;
 /**
  *
  */
-final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInterface, SupportsIptcMetadataInterface
+final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInterface, ProvidesOriginalUriInterface, SupportsIptcMetadataInterface
 {
     /**
      * @var CantoAssetSource
@@ -80,6 +81,11 @@ final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInt
      * @var string
      */
     private $previewUri;
+
+    /**
+     * @var string
+     */
+    private $originalUri;
 
     /**
      * @var int
@@ -135,6 +141,7 @@ final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInt
         $assetProxy->widthInPixels = $jsonObject->width ? (int)$jsonObject->width : null;
         $assetProxy->heightInPixels = $jsonObject->height ? (int)$jsonObject->height : null;
 
+        $assetProxy->originalUri = $jsonObject->url->directUrlOriginal;
         $assetProxy->previewUri = $jsonObject->url->directUrlPreview;
 
         return $assetProxy;
@@ -274,7 +281,15 @@ final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInt
      */
     public function getImportStream()
     {
-        return fopen((string)$this->assetSource->getCantoClient()->directUri($this->identifier), 'rb');
+        return fopen($this->originalUri, 'rb');
+    }
+
+    /**
+     * @return UriInterface
+     */
+    public function getOriginalUri(): UriInterface
+    {
+        return new Uri($this->originalUri);
     }
 
     /**
