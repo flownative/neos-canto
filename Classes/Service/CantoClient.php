@@ -148,7 +148,7 @@ final class CantoClient
     private function redirectToUri(string $uri): void
     {
         header('Location: ' . $uri);
-        throw new StopActionException('Canto login required', 1625222167);
+        throw new AuthenticationFailedException('Canto login required', 1625222167);
     }
 
     /**
@@ -236,6 +236,31 @@ final class CantoClient
             $customFields = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
             $this->apiResponsesCache->set('customFields', $customFields);
             return $customFields;
+        }
+        return [];
+    }
+
+    /**
+     * @throws AuthenticationFailedException
+     * @throws GuzzleException
+     * @throws HttpException
+     * @throws IdentityProviderException
+     * @throws MissingActionNameException
+     * @throws MissingClientSecretException
+     * @throws OAuthClientException
+     * @todo perhaps cache the result
+     */
+    public function getFacetValues(string $facetName): array
+    {
+        $response = $this->sendAuthenticatedRequest('search');
+        if ($response->getStatusCode() === 200) {
+            $result = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+
+            foreach ($result['facets'] as $facet) {
+                if ($facet['name'] === $facetName) {
+                    return $facet['value'];
+                }
+            }
         }
         return [];
     }

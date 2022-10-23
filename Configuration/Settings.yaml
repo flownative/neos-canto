@@ -1,8 +1,15 @@
 Flownative:
   Canto:
+    # At the moment, this is "either or", so use custom fields or tags for mapping, not both
     mapping:
       # map "Custom Fields" from Canto to Neos
       customFields: []
+      # map "Tags" from Canto to Neos
+      tags:
+        field: 'tags'
+        limit: 20
+        include: []
+        exclude: ['Untagged']
     webhook:
       pathPrefix: '/flownative-canto/webhook/'
       # A token that can be used to secure webhook invocations; used only if set

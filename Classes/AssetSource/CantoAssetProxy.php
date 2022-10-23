@@ -81,7 +81,6 @@ final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInt
         $assetProxy->lastModified = \DateTime::createFromFormat('YmdHisv', $jsonObject->default->{'Date modified'});
         $assetProxy->fileSize = (int)$jsonObject->size;
         $assetProxy->mediaType = MediaTypes::getMediaTypeFromFilename($jsonObject->name);
-        $assetProxy->tags = $jsonObject->tag ?? [];
 
         $assetProxy->iptcProperties['CopyrightNotice'] = $jsonObject->copyright ?? ($jsonObject->default->Copyright ?? '');
 
@@ -202,7 +201,8 @@ final class CantoAssetProxy implements AssetProxyInterface, HasRemoteOriginalInt
 
     public function getTags(): array
     {
-        return $this->tags;
+        return [];
+        // return $this->tags;
     }
 
     public function isImported(): bool

@@ -207,4 +207,60 @@ class CantoCommandController extends CommandController
 
         !$quiet && $this->outputLine('<success>Import done.</success>');
     }
+
+    /**
+     * Import Canto Tags as Tags
+     *
+     * @param string $assetSourceIdentifier Name of the canto asset source
+     * @param bool $quiet If set, only errors will be displayed.
+     * @throws GuzzleException
+     * @throws IllegalObjectTypeException
+     * @throws OAuthClientException
+     * @throws StopCommandException
+     * @throws AuthenticationFailedException
+     */
+    public function importTagsCommand(string $assetSourceIdentifier = CantoAssetSource::ASSET_SOURCE_IDENTIFIER, bool $quiet = true): void
+    {
+        !$quiet && $this->outputLine('<b>Importing tags via Canto API</b>');
+
+        $tagMapping = $this->mapping['tags'];
+        if (empty($tagMapping)) {
+            $this->outputLine('<error>No tags mapping configured</error>');
+            $this->quit(1);
+        }
+
+        try {
+            /** @var CantoAssetSource $cantoAssetSource */
+            $cantoAssetSource = $this->assetSourceService->getAssetSources()[$assetSourceIdentifier];
+            $cantoClient = $cantoAssetSource->getCantoClient();
+            $cantoClient->allowClientCredentialsAuthentication(true);
+        } catch (\Exception) {
+            $this->outputLine('<error>Canto client could not be created</error>');
+            $this->quit(1);
+        }
+
+        $tags = $cantoClient->getFacetValues($tagMapping['field']);
+        $relevantTags = array_chunk($tags, $tagMapping['limit']);
+        foreach ($relevantTags[0] as $tagLabel) {
+
+            if (!empty($tagMapping['include']) && !in_array($tagLabel, $tagMapping['include'], true)) {
+                continue;
+            }
+            if (!empty($tagMapping['exclude']) && in_array($tagLabel, $tagMapping['exclude'], true)) {
+                continue;
+            }
+
+            $tag = $this->tagRepository->findOneByLabel($tagLabel);
+
+            if ($tag === null) {
+                $tag = new Tag($tagLabel);
+                $this->tagRepository->add($tag);
+                !$quiet && $this->outputLine('  + %s', [$tagLabel]);
+            }
+
+            !$quiet && $this->outputLine();
+        }
+
+        !$quiet && $this->outputLine('<success>Import done.</success>');
+    }
 }

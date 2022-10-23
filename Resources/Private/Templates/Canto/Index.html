@@ -2,7 +2,7 @@
 <div class="neos-content neos-container-fluid">
     <h2>{neos:backend.translate(id: 'cantoConnectionSettings', source: 'Main', package: 'Flownative.Canto')}</h2>
     <br/>
-    <f:form action="updateRefreshToken" method="post">
+    <f:form controller="Authorization" action="start" additionalAttributes="{'target': '_blank'}" method="post">
         <div class="neos-row-fluid">
             <div class="neos-span6">
                 <fieldset>
@@ -19,13 +19,17 @@
                                     <tr>
                                         <td>{user.firstName} {user.lastName}</td>
                                         <td>{user.email}</td>
+                                    </tr>
                                 </table>
                             </div>
                         </div>
                     </f:if>
                 </fieldset>
                 <f:if condition="{authenticationError}">
-                    <p><i class="fa fa-exclamation-triangle"></i> {authenticationError}</p>
+                    <div class="neos-control-group">
+                        <p><i class="fa fa-exclamation-triangle"></i> {authenticationError}</p>
+                    </div>
+                    <button type="submit" class="neos-button neos-button-primary">Authorize with Canto login</button>
                 </f:if>
             </div>
         </div>

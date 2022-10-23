@@ -248,6 +248,10 @@ final class CantoAssetProxyQuery implements AssetProxyQueryInterface
                 }
             }
         }
+
+        if (!empty($this->mapping['tags'])) {
+            $this->tagQuery .= '&tags="' . $this->activeTag->getLabel() . '"';
+        }
     }
 
     /**
