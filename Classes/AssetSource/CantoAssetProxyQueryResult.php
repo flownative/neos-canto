@@ -89,7 +89,7 @@ class CantoAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @throws GuzzleException
      * @throws InvalidDataException
      */
-    public function current()
+    public function current(): mixed
     {
         $this->initialize();
         return $this->assetProxiesIterator->current();
@@ -102,7 +102,7 @@ class CantoAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @throws GuzzleException
      * @throws InvalidDataException
      */
-    public function next()
+    public function next(): void
     {
         $this->initialize();
         $this->assetProxiesIterator->next();
@@ -115,7 +115,7 @@ class CantoAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @throws GuzzleException
      * @throws InvalidDataException
      */
-    public function key()
+    public function key(): mixed
     {
         $this->initialize();
         return $this->assetProxiesIterator->key();
@@ -141,7 +141,7 @@ class CantoAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @throws GuzzleException
      * @throws InvalidDataException
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->initialize();
         $this->assetProxiesIterator->rewind();
@@ -167,7 +167,7 @@ class CantoAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @throws GuzzleException
      * @throws InvalidDataException
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         $this->initialize();
         return $this->assetProxiesIterator->offsetGet($offset);
@@ -180,13 +180,13 @@ class CantoAssetProxyQueryResult implements AssetProxyQueryResultInterface
      * @throws GuzzleException
      * @throws InvalidDataException
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->initialize();
         $this->assetProxiesIterator->offsetSet($offset, $value);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
     }
 
